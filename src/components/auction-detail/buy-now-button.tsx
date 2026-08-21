@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { usePaystackPayment } from 'react-paystack'
 import { ConfirmDialog } from '#/components/confirm-dialog'
+import { EftPaymentDialog } from '#/components/eft-payment-dialog'
 import { Button } from '#/components/ui/button'
 import {
   Dialog,
@@ -10,14 +11,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '#/components/ui/dialog'
-import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
-import { UploadWidget } from '#/components/upload-widget'
 import {
-  COMPANY_BANK_DETAILS,
-  EFT_HOLD_HOURS,
   ORDER_PAYMENT_METHODS,
   ORDER_PAYMENT_METHOD_IDS,
+  ORDER_STATUS_IDS,
+  STATUS_IDS,
   USER_TYPE_IDS,
   userTypes,
 } from '#/lib/app-data'
@@ -31,11 +30,19 @@ import type { Listing } from '#/types/auction'
 export function BuyNowButton({ auction }: { auction: Listing }) {
   const navigate = useNavigate()
   const user = userStore((s) => s.user)
+  const myPurchaseOrders = userStore((s) => s.myPurchaseOrders)
   const [showLoginPrompt, setShowLoginPrompt] = useState(false)
   const [showDepositPrompt, setShowDepositPrompt] = useState(false)
   const [showBuyModal, setShowBuyModal] = useState(false)
+  const [eftOrderId, setEftOrderId] = useState('')
 
   const isOwnListing = !!user && user.uid === auction.uid
+
+  // the order behind the current claim, when that claim is ours
+  const myOrder =
+    auction.orderId && auction.buyerUid && auction.buyerUid === user?.uid
+      ? myPurchaseOrders.find((el) => el.id === auction.orderId)
+      : undefined
 
   function onBuyNowClick() {
     if (!user) {
@@ -49,11 +56,63 @@ export function BuyNowButton({ auction }: { auction: Listing }) {
     setShowBuyModal(true)
   }
 
+  /**
+   * Only the trigger reacts to the listing status - the dialogs below stay
+   * mounted no matter what, otherwise claiming the listing (which flips it to
+   * `reserved` through the live listener) would tear down the dialog the buyer
+   * is busy with.
+   */
+  function trigger() {
+    if (isOwnListing) {
+      return (
+        <Button size="lg" disabled>
+          Your listing
+        </Button>
+      )
+    }
+    if (auction.status === STATUS_IDS.concludedSold) {
+      return (
+        <Button size="lg" disabled>
+          Sold
+        </Button>
+      )
+    }
+    if (auction.status === STATUS_IDS.reserved) {
+      // we hold the claim, so let ourselves back into the payment we started
+      if (myOrder?.status === ORDER_STATUS_IDS.pendingPayment &&
+        myOrder.paymentMethod === ORDER_PAYMENT_METHOD_IDS.eft) {
+        return (
+          <Button size="lg" onClick={() => setEftOrderId(auction.orderId!)}>
+            Complete payment
+          </Button>
+        )
+      }
+      if (myOrder?.status === ORDER_STATUS_IDS.awaitingEftConfirmation) {
+        return (
+          <Button size="lg" disabled>
+            Payment pending
+          </Button>
+        )
+      }
+      return (
+        <Button size="lg" disabled>
+          Reserved
+        </Button>
+      )
+    }
+    if (auction.status === STATUS_IDS.published) {
+      return (
+        <Button onClick={onBuyNowClick} size="lg">
+          Buy now
+        </Button>
+      )
+    }
+    return null
+  }
+
   return (
     <>
-      <Button onClick={onBuyNowClick} size="lg" disabled={isOwnListing}>
-        {isOwnListing ? 'Your listing' : 'Buy now'}
-      </Button>
+      {trigger()}
 
       <ConfirmDialog
         open={showLoginPrompt}
@@ -93,6 +152,20 @@ export function BuyNowButton({ auction }: { auction: Listing }) {
         auction={auction}
         open={showBuyModal}
         onOpenChange={setShowBuyModal}
+        onEftClaimed={(orderId) => {
+          setShowBuyModal(false)
+          setEftOrderId(orderId)
+        }}
+      />
+
+      <EftPaymentDialog
+        open={!!eftOrderId}
+        onOpenChange={(o) => !o && setEftOrderId('')}
+        orderId={eftOrderId}
+        amount={myOrder?.amount ?? auction.price ?? 0}
+        defaultReference={myOrder?.eftReference}
+        defaultProofUrl={myOrder?.eftProofUrl}
+        onSubmitted={() => navigate({ to: ROUTES.myOrders })}
       />
     </>
   )
@@ -102,10 +175,12 @@ function BuyNowModal({
   auction,
   open,
   onOpenChange,
+  onEftClaimed,
 }: {
   auction: Listing
   open: boolean
   onOpenChange: (open: boolean) => void
+  onEftClaimed: (orderId: string) => void
 }) {
   const navigate = useNavigate()
   const user = userStore((s) => s.user)
@@ -113,21 +188,11 @@ function BuyNowModal({
   const setLoading = appStore((s) => s.setLoading)
 
   const [method, setMethod] = useState(ORDER_PAYMENT_METHOD_IDS.online)
-  const [orderId, setOrderId] = useState('')
-  const [eftReference, setEftReference] = useState('')
-  const [eftProofUrl, setEftProofUrl] = useState('')
 
   const amount = auction.price || 0
   const initializePayment = usePaystackPayment(
     payStackConfig(amount, user, 'order'),
   )
-
-  function reset() {
-    setOrderId('')
-    setEftReference('')
-    setEftProofUrl('')
-    onOpenChange(false)
-  }
 
   /** Reserves the listing so no one else can buy it while we take payment. */
   async function claim(): Promise<string | null> {
@@ -151,8 +216,8 @@ function BuyNowModal({
       if (!newOrderId) return
 
       if (method === ORDER_PAYMENT_METHOD_IDS.eft) {
-        // keep the modal open so the buyer can capture their payment proof
-        setOrderId(newOrderId)
+        // hand over to the eft dialog so the buyer can capture their proof
+        onEftClaimed(newOrderId)
         return
       }
 
@@ -188,7 +253,7 @@ function BuyNowModal({
         paystackVerifiedAt: new Date(verified.verifiedAt),
       })
       toast.success('Payment received, this lot is yours')
-      reset()
+      onOpenChange(false)
       navigate({ to: ROUTES.myOrders })
     } catch (e: any) {
       toast.error(e.message)
@@ -196,131 +261,53 @@ function BuyNowModal({
       setLoading(false)
     }
   }
-
-  async function onSubmitEftProof() {
-    if (!eftReference.trim()) {
-      toast.error('Please enter the reference you paid with')
-      return
-    }
-    setLoading(true)
-    const dbWrite = (await import('#/services/db-write.service')).default
-    try {
-      await dbWrite.submitEftProof(orderId, {
-        eftReference: eftReference.trim(),
-        eftProofUrl: eftProofUrl || undefined,
-      })
-      toast.success('Proof submitted, we will confirm your payment shortly')
-      reset()
-      navigate({ to: ROUTES.myOrders })
-    } catch (e: any) {
-      toast.error(e.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const paymentRef = orderId ? `ORD-${orderId.slice(-8).toUpperCase()}` : ''
 
   return (
-    <Dialog open={open} onOpenChange={(o) => (o ? onOpenChange(o) : reset())}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{orderId ? 'Pay by EFT' : 'Buy now'}</DialogTitle>
+          <DialogTitle>Buy now</DialogTitle>
         </DialogHeader>
 
-        {!orderId ? (
-          <div className="flex w-full flex-col gap-6 py-2">
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-sm text-muted-foreground">Total due</span>
-              <h2 className="text-3xl font-bold">{currencyFormat(amount)}</h2>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>How would you like to pay?</Label>
-              {ORDER_PAYMENT_METHODS.map((item) => (
-                <button
-                  type="button"
-                  key={item.value}
-                  onClick={() => setMethod(item.value)}
-                  className={`flex items-start gap-3 rounded-lg border p-3 text-left transition-colors ${
-                    method === item.value
-                      ? 'border-primary bg-primary/5'
-                      : 'hover:bg-muted'
-                  }`}
-                >
-                  <item.icon className="mt-0.5 size-5 shrink-0 text-primary" />
-                  <span className="flex flex-col">
-                    <span className="font-semibold capitalize">
-                      {item.label}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {item.desc}
-                    </span>
+        <div className="flex w-full flex-col gap-6 py-2">
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-sm text-muted-foreground">Total due</span>
+            <h2 className="display-title text-3xl font-semibold">{currencyFormat(amount)}</h2>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label>How would you like to pay?</Label>
+            {ORDER_PAYMENT_METHODS.map((item) => (
+              <button
+                type="button"
+                key={item.value}
+                onClick={() => setMethod(item.value)}
+                className={`flex items-start gap-3 rounded-lg border p-3 text-left transition-colors ${
+                  method === item.value
+                    ? 'border-primary bg-primary/5'
+                    : 'hover:bg-muted'
+                }`}
+              >
+                <item.icon className="mt-0.5 size-5 shrink-0 text-primary" />
+                <span className="flex flex-col">
+                  <span className="font-semibold capitalize">{item.label}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {item.desc}
                   </span>
-                </button>
-              ))}
-            </div>
+                </span>
+              </button>
+            ))}
           </div>
-        ) : (
-          <div className="flex w-full flex-col gap-4 py-2">
-            <p className="text-sm text-muted-foreground">
-              This lot is reserved for you for {EFT_HOLD_HOURS} hours. Transfer{' '}
-              <b>{currencyFormat(amount)}</b> using the reference below, then
-              upload your proof of payment.
-            </p>
-            <div className="flex flex-col gap-1 rounded-lg border bg-muted/40 p-3 text-sm">
-              <BankRow label="Account name" value={COMPANY_BANK_DETAILS.accountName} />
-              <BankRow label="Bank" value={COMPANY_BANK_DETAILS.bank} />
-              <BankRow label="Account number" value={COMPANY_BANK_DETAILS.accountNumber} />
-              <BankRow label="Branch code" value={COMPANY_BANK_DETAILS.branchCode} />
-              <BankRow label="Account type" value={COMPANY_BANK_DETAILS.accountType} />
-              <BankRow label="Reference" value={paymentRef} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="eft-ref">Your payment reference</Label>
-              <Input
-                id="eft-ref"
-                value={eftReference}
-                placeholder={paymentRef}
-                onChange={(e) => setEftReference(e.target.value)}
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <Label>Proof of payment (optional)</Label>
-              {eftProofUrl ? (
-                <p className="text-xs text-primary">Proof uploaded</p>
-              ) : (
-                <UploadWidget
-                  max={1}
-                  path={`documents/orders/${orderId}`}
-                  accepted={['image/', 'application/pdf']}
-                  updateFiles={(files) => setEftProofUrl(files[0]?.url || '')}
-                />
-              )}
-            </div>
-          </div>
-        )}
+        </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={reset}>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Close
           </Button>
-          <Button
-            disabled={isLoading}
-            onClick={orderId ? onSubmitEftProof : onContinue}
-          >
-            {orderId ? 'Submit proof' : 'Continue'}
+          <Button disabled={isLoading} onClick={onContinue}>
+            Continue
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
-
-function BankRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-4">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{value}</span>
-    </div>
   )
 }

@@ -36,7 +36,7 @@ export function SectionCard({
 }) {
   return (
     <div
-      className={`w-full rounded-none border-0 bg-white p-4 shadow-none sm:rounded-3xl sm:border sm:p-6 sm:shadow-sm ${height || ''}`}
+      className={`w-full rounded-none border-0 bg-card p-4 shadow-none sm:rounded-xl sm:border sm:p-6 ${height || ''}`}
     >
       <div className="flex h-full w-full flex-col items-start gap-3 sm:gap-4">
         <div className="flex w-full items-center gap-3">
@@ -46,7 +46,7 @@ export function SectionCard({
           </h3>
           {rightElement}
         </div>
-        <hr className="w-full border-gray-100" />
+        <hr className="w-full border-border" />
         {children}
       </div>
     </div>

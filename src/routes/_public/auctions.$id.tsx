@@ -7,7 +7,7 @@ import { AuctionGallery } from '#/components/auction-detail/gallery'
 import { OtherAuctions } from '#/components/auction-detail/other-auctions'
 import { AuctionDetailsTopBar } from '#/components/auction-detail/top-bar'
 import { TopControls } from '#/components/auction-detail/top-controls'
-import { Loading } from '#/components/loading'
+import { Skeleton } from '#/components/ui/skeleton'
 import { LISTING_KIND_IDS } from '#/lib/app-data'
 import { publicStore } from '#/state/public.store'
 
@@ -65,7 +65,7 @@ function AuctionDetailPage() {
   }, [id])
 
   if (isFetching) {
-    return <Loading visible />
+    return <AuctionDetailSkeleton />
   }
 
   if (error || !currentAuction) {
@@ -106,6 +106,26 @@ function AuctionDetailPage() {
       </div>
 
       <OtherAuctions currentAuctionId={currentAuction.id} />
+    </div>
+  )
+}
+
+function AuctionDetailSkeleton() {
+  return (
+    <div className="flex w-full flex-col">
+      <Skeleton className="aspect-video w-full rounded-none sm:mx-auto sm:aspect-21/9 sm:max-w-6xl sm:rounded-xl" />
+      <div className="mx-auto w-full max-w-6xl px-2 py-4 sm:px-0">
+        <div className="flex w-full flex-col gap-4">
+          <Skeleton className="h-20 w-full rounded-2xl sm:h-24" />
+          <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-5">
+            <div className="flex flex-col gap-4 sm:col-span-3">
+              <Skeleton className="h-40 w-full rounded-xl" />
+              <Skeleton className="h-56 w-full rounded-xl" />
+            </div>
+            <Skeleton className="h-64 w-full rounded-xl sm:col-span-2" />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

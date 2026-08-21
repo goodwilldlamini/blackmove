@@ -32,7 +32,7 @@ import { APP_MESSAGES } from '#/lib/app-messages'
 import { ROUTES } from '#/lib/constants'
 import { DBTABLES, fsStore } from '#/lib/firebase'
 import { toast } from '#/lib/toast'
-import { requiredValidator } from '#/lib/validators'
+import { numberValidator, requiredValidator, zodFormValidator } from '#/lib/validators'
 import { appStore } from '#/state/app.store'
 import { DEFAULT_VALUES, tempStore } from '#/state/temp.store'
 import { userStore } from '#/state/user.store'
@@ -44,15 +44,16 @@ type WizardKind = (typeof LISTING_KINDS)[number]
 const schema = z.object({
   title: requiredValidator,
   desc: requiredValidator,
-  quantity: z.number().min(1, 'This field is required'),
+  quantity: numberValidator.int('Enter a whole number').min(1, 'This field is required'),
   sex: requiredValidator,
   breedType: requiredValidator,
   breed: requiredValidator,
   breed2: z.string(),
   ageClass: z.string(),
-  age: z.number(),
-  weight: z.number().min(1, 'This field is required'),
-  price: z.number().min(1, 'This field is required'),
+  // optional: legacy listings were saved without a year of birth
+  age: numberValidator.int('Enter a valid year').optional(),
+  weight: numberValidator.min(1, 'This field is required'),
+  price: numberValidator.min(1, 'This field is required'),
   province: requiredValidator,
   town: requiredValidator,
 })
@@ -106,19 +107,19 @@ export function AuctionWizard({ auctionId: editingId }: { auctionId?: string }) 
     defaultValues: {
       title: tempAuction.title || '',
       desc: tempAuction.desc || '',
-      quantity: tempAuction.quantity || 0,
+      quantity: tempAuction.quantity,
       sex: tempAuction.sex || '',
       breedType: tempAuction.breedType || '',
       breed: tempAuction.breed || '',
       breed2: tempAuction.breed2 || '',
       ageClass: tempAuction.ageClass || '',
-      age: tempAuction.age || 0,
-      weight: tempAuction.weight || 0,
-      price: tempAuction.price || 0,
+      age: tempAuction.age,
+      weight: tempAuction.weight,
+      price: tempAuction.price,
       province: tempAuction.province || '',
       town: tempAuction.town || '',
     },
-    validators: { onChange: schema },
+    validators: { onChange: zodFormValidator(schema) },
     onSubmit: async ({ value }) => {
       updateTempAuction(value)
       const finalAuction = {

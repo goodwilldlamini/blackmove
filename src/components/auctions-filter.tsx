@@ -105,7 +105,7 @@ export function FilterWidget({ onReset }: { onReset: () => void }) {
           ))}
         </div>
       </div>
-      <div className="sticky bottom-0 w-full bg-muted p-4">
+      <div className="sticky bottom-0 w-full bg-secondary p-4">
         <Button
           disabled={!isSearchEnabled}
           variant="secondary"

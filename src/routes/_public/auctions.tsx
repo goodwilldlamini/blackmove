@@ -6,6 +6,7 @@ import { EmptyWidget } from '#/components/empty'
 import { FilterWidget } from '#/components/auctions-filter'
 import { Button } from '#/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '#/components/ui/sheet'
+import { Skeleton } from '#/components/ui/skeleton'
 import { appStore } from '#/state/app.store'
 import { publicStore } from '#/state/public.store'
 import type { Listing } from '#/types/auction'
@@ -27,8 +28,8 @@ function AuctionsListPage() {
   const liveAuctions = publicStore((s) => s.liveAuctions)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filteredAuctions, setFilteredAuctions] = useState<Listing[]>([])
+  const [isFiltering, setIsFiltering] = useState(true)
   const searchArg = appStore((s) => s.searchArg)
-  const setLoading = appStore((s) => s.setLoading)
   const searchProvince = appStore((s) => s.searchProvince)
   const searchCategory = appStore((s) => s.searchCategory)
   const searchBreedType = appStore((s) => s.searchBreedType)
@@ -38,6 +39,7 @@ function AuctionsListPage() {
 
   const isSearchEnabled =
     !!searchArg ||
+    !!searchProvince ||
     !!searchCategory ||
     !!searchBreedType ||
     searchProdSystem.length > 0 ||
@@ -45,7 +47,7 @@ function AuctionsListPage() {
     !!searchKind
 
   useEffect(() => {
-    setLoading(true)
+    setIsFiltering(true)
     let auctions = liveAuctions
     if (searchArg) {
       auctions = auctions.filter(
@@ -65,9 +67,9 @@ function AuctionsListPage() {
       )
     }
     setFilteredAuctions(auctions)
-    const timeout = setTimeout(() => setLoading(false), 500)
+    const timeout = setTimeout(() => setIsFiltering(false), 500)
     return () => clearTimeout(timeout)
-  }, [liveAuctions, searchArg, searchProvince, searchCategory, searchBreedType, searchProdSystem, searchSex, searchKind, setLoading])
+  }, [liveAuctions, searchArg, searchProvince, searchCategory, searchBreedType, searchProdSystem, searchSex, searchKind])
 
   function onReset() {
     appStore.setState({
@@ -82,8 +84,8 @@ function AuctionsListPage() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="flex w-full items-center justify-between border-b p-4 shadow-sm">
-        <h1 className="text-xs font-semibold sm:text-2xl">Auctions</h1>
+      <div className="flex w-full items-center justify-between border-b p-4">
+        <h1 className="display-title text-lg font-semibold sm:text-2xl">Auctions</h1>
         <Button
           variant="outline"
           className="sm:hidden"
@@ -97,8 +99,14 @@ function AuctionsListPage() {
         <div className="hidden w-72 shrink-0 sm:flex">
           <FilterWidget onReset={onReset} />
         </div>
-        {filteredAuctions.length > 0 ? (
-          <div className="grid flex-1 grid-cols-1 gap-4 overflow-y-auto p-4 sm:grid-cols-2 md:grid-cols-3">
+        {isFiltering ? (
+          <div className="grid flex-1 grid-cols-1 gap-4 overflow-y-auto p-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <AuctionCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : filteredAuctions.length > 0 ? (
+          <div className="grid flex-1 grid-cols-1 gap-4 overflow-y-auto p-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
             {filteredAuctions.map((auction) => (
               <AuctionCard key={auction.id} auction={auction} />
             ))}
@@ -124,6 +132,18 @@ function AuctionsListPage() {
           <FilterWidget onReset={onReset} />
         </SheetContent>
       </Sheet>
+    </div>
+  )
+}
+
+function AuctionCardSkeleton() {
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <Skeleton className="aspect-4/3 w-full rounded-xl" />
+      <div className="flex w-full flex-col gap-2">
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
     </div>
   )
 }

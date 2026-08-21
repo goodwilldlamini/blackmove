@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '#/components/ui/avatar'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import { ConfirmDialog } from '#/components/confirm-dialog'
+import { EftPaymentDialog } from '#/components/eft-payment-dialog'
 import { EmptyWidget } from '#/components/empty'
 import { PageTitle } from '#/components/page-title'
 import {
@@ -65,6 +66,8 @@ function OrderCard({ order }: { order: EdOrder }) {
   const setLoading = appStore((s) => s.setLoading)
   const isLoading = appStore((s) => s.isLoading)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [showCancel, setShowCancel] = useState(false)
+  const [showEft, setShowEft] = useState(false)
 
   const status = ORDER_STATUSES.find((el) => el.value === order.status)
   const method = ORDER_PAYMENT_METHODS.find(
@@ -80,6 +83,35 @@ function OrderCard({ order }: { order: EdOrder }) {
     order.status === ORDER_STATUS_IDS.awaitingEftConfirmation &&
     order.paymentMethod === ORDER_PAYMENT_METHOD_IDS.eft &&
     (isSeller || isAdmin)
+
+  // the buyer can pick their EFT back up, or correct a reference/receipt they
+  // already sent, right up until the payment is confirmed
+  const canSubmitProof =
+    isBuyer &&
+    order.paymentMethod === ORDER_PAYMENT_METHOD_IDS.eft &&
+    (order.status === ORDER_STATUS_IDS.pendingPayment ||
+      order.status === ORDER_STATUS_IDS.awaitingEftConfirmation)
+
+  // and back out while nothing has been paid, releasing the listing
+  const canCancel = isBuyer && order.status === ORDER_STATUS_IDS.pendingPayment
+
+  async function onCancelOrder() {
+    setLoading(true)
+    const dbWrite = (await import('#/services/db-write.service')).default
+    try {
+      await dbWrite.releaseListingReservation({
+        listingId: order.listingId,
+        orderId: order.id!,
+        status: ORDER_STATUS_IDS.cancelled,
+        cancelledBy: user?.uid,
+      })
+      toast.success('Order cancelled, the listing is back on the market')
+    } catch (e: any) {
+      toast.error(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function onConfirmPayment() {
     setLoading(true)
@@ -150,11 +182,38 @@ function OrderCard({ order }: { order: EdOrder }) {
             </div>
           )}
 
-          {isBuyer &&
+          {(canSubmitProof || canCancel) && (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              {canSubmitProof && (
+                <Button
+                  size="sm"
+                  disabled={isLoading}
+                  onClick={() => setShowEft(true)}
+                >
+                  {order.eftReference
+                    ? 'Update proof'
+                    : 'Upload proof of payment'}
+                </Button>
+              )}
+              {canCancel && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => setShowCancel(true)}
+                >
+                  Cancel order
+                </Button>
+              )}
+            </div>
+          )}
+
+          {/* the buyer has the upload button above, the seller just waits */}
+          {(isSeller || isAdmin) &&
             order.status === ORDER_STATUS_IDS.pendingPayment &&
             order.paymentMethod === ORDER_PAYMENT_METHOD_IDS.eft && (
               <p className="mt-1 text-xs text-warning">
-                Awaiting your proof of payment
+                Awaiting the buyer's proof of payment
               </p>
             )}
         </div>
@@ -170,6 +229,27 @@ function OrderCard({ order }: { order: EdOrder }) {
           )} has actually reflected. This marks the listing sold and cannot be undone.`,
         }}
         onConfirm={onConfirmPayment}
+      />
+
+      <ConfirmDialog
+        open={showCancel}
+        onOpenChange={setShowCancel}
+        model={{
+          title: 'Cancel order',
+          message: `This releases ${order.listingTitle} back onto the market and someone else may buy it. Only cancel if you have not paid.`,
+          confirmButtonText: 'Yes, cancel it',
+          cancelButtonText: 'Keep my order',
+        }}
+        onConfirm={onCancelOrder}
+      />
+
+      <EftPaymentDialog
+        open={showEft}
+        onOpenChange={setShowEft}
+        orderId={order.id!}
+        amount={order.amount}
+        defaultReference={order.eftReference}
+        defaultProofUrl={order.eftProofUrl}
       />
     </div>
   )

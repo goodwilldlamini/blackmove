@@ -1,6 +1,5 @@
 import {
   Calendar,
-  Eye,
   Feather,
   Hash,
   Info,
@@ -8,6 +7,7 @@ import {
   ShieldCheck,
   Sprout,
   Syringe,
+  Tag,
   UserRound,
 } from 'lucide-react'
 import { DetailRow } from '#/components/detail-row'
@@ -18,6 +18,7 @@ import {
   BREED_TYPES,
   CATEGORIES,
   GENDERS,
+  LISTING_KINDS,
   PROD_SYSTEMS,
   VACCINES,
 } from '#/lib/app-data'
@@ -50,7 +51,11 @@ function GeneralDetails({ auction }: { auction: Listing }) {
   const inspectionPassed = !!auction.inspectionPassed
 
   const details = [
-    { label: 'views', icon: Eye, value: '12 views' },
+    {
+      label: 'listing type',
+      icon: Tag,
+      value: LISTING_KINDS.find((el) => el.value === auction.kind)?.label,
+    },
     {
       label: 'inspection',
       icon: ShieldCheck,
@@ -66,15 +71,15 @@ function GeneralDetails({ auction }: { auction: Listing }) {
         {details.map((detail) => (
           <div
             key={detail.label}
-            className="flex items-center gap-3 rounded-xl bg-gray-50 p-3"
+            className="flex items-center gap-3 rounded-xl bg-muted p-3"
           >
             <SectionIconChip icon={detail.icon} />
             <div className="flex min-w-0 flex-1 flex-col gap-0">
-              <span className="text-[10px] font-semibold tracking-wide text-gray-400 uppercase">
+              <span className="text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
                 {detail.label}
               </span>
               <span
-                className={`truncate text-xs font-bold capitalize sm:text-sm ${detail.valueClass || 'text-gray-700'}`}
+                className={`truncate text-xs font-bold capitalize sm:text-sm ${detail.valueClass || 'text-foreground'}`}
               >
                 {detail.value}
               </span>

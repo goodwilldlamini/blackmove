@@ -11,7 +11,7 @@ export function CoverImage({ auction }: { auction: Listing }) {
       <img
         src={auction.cover || auction.images?.[0]}
         alt={auction.title}
-        className="size-full object-cover"
+        className="size-full object-cover transition-transform duration-200 ease-out motion-safe:group-hover:scale-105"
       />
     </Link>
   )

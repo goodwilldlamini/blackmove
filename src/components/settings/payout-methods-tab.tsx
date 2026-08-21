@@ -6,16 +6,16 @@ import { SelectField } from '#/components/form/select-field'
 import { TextField } from '#/components/form/text-field'
 import { EmptyWidget } from '#/components/empty'
 import { Button } from '#/components/ui/button'
-import { BANKS, defaultRequiredMessage, USER_TYPE_IDS } from '#/lib/app-data'
+import { BANKS, USER_TYPE_IDS } from '#/lib/app-data'
 import { toast } from '#/lib/toast'
-import { requiredValidator } from '#/lib/validators'
+import { accountNumberValidator, requiredValidator } from '#/lib/validators'
 import { appStore } from '#/state/app.store'
 import { DEFAULT_VALUES, tempStore } from '#/state/temp.store'
 import { userStore } from '#/state/user.store'
 
 const schema = z.object({
   bank: requiredValidator,
-  acc: z.number({ error: defaultRequiredMessage }).min(1, defaultRequiredMessage),
+  acc: accountNumberValidator,
   type: requiredValidator,
   name: requiredValidator,
 })
@@ -91,7 +91,8 @@ function NewPayoutMethod({ onClose }: { onClose: () => void }) {
   const form = useForm({
     defaultValues: {
       bank: tempMethod.bank || '',
-      acc: tempMethod.acc || 0,
+      // legacy docs stored this as a number
+      acc: tempMethod.acc == null ? '' : String(tempMethod.acc),
       type: tempMethod.type || '',
       name: tempMethod.name || '',
     },
@@ -133,7 +134,7 @@ function NewPayoutMethod({ onClose }: { onClose: () => void }) {
         {(field) => <SelectField field={field} label="bank name" options={BANKS} />}
       </form.Field>
       <form.Field name="acc">
-        {(field) => <TextField field={field} type="number" label="account number" />}
+        {(field) => <TextField field={field} label="account number" />}
       </form.Field>
       <form.Field name="type">
         {(field) => <TextField field={field} label="account type" />}

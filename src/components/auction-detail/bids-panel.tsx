@@ -22,7 +22,7 @@ export function AuctionBids({ auction }: { auction: Listing }) {
       title="bids"
       height="h-full"
       rightElement={
-        <div className="flex items-center gap-1 text-gray-500">
+        <div className="flex items-center gap-1 text-muted-foreground">
           <Hash className="size-3" />
           <span className="text-base font-semibold sm:text-lg">
             {auction.bids?.length || 0}
@@ -38,7 +38,7 @@ export function AuctionBids({ auction }: { auction: Listing }) {
             <div
               key={`${index}_${bid.uid}_${bid.amount}`}
               className={`flex w-full items-center gap-3 rounded-xl border p-2.5 ${
-                isLeading ? 'border-primary bg-primary/10' : 'border-gray-100'
+                isLeading ? 'border-primary bg-primary/10' : 'border-border'
               }`}
             >
               <Avatar>
@@ -56,13 +56,13 @@ export function AuctionBids({ auction }: { auction: Listing }) {
                     </Badge>
                   )}
                 </div>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-muted-foreground">
                   {dateFormatTime(bid.createdAt)}
                 </span>
               </div>
               <span
                 className={`text-sm font-semibold sm:text-base ${
-                  isLeading ? 'text-primary' : 'text-gray-700'
+                  isLeading ? 'text-primary' : 'text-foreground'
                 }`}
               >
                 {currencyFormat(bid.amount)}

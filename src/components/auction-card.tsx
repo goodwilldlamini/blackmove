@@ -6,7 +6,6 @@ import { EdTimer, TimerText } from '#/components/timer'
 import {
   BREED_TYPES,
   GENDERS,
-  GENDER_IDS,
   LISTING_KIND_IDS,
   PROD_SYSTEMS,
   STATUS_IDS,
@@ -21,9 +20,9 @@ export function AuctionCard({ auction }: { auction: Listing }) {
   const isBuyNow = auction.kind === LISTING_KIND_IDS.buyNow
 
   return (
-    <div className="relative w-full">
+    <div className="group relative w-full">
       <div className="flex w-full flex-col gap-2">
-        <div className="relative w-full">
+        <div className="relative w-full rounded-xl transition-shadow duration-200 hover:shadow-md">
           <CoverImage auction={auction} />
           <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
             <LikeButton hideText auction={auction} />
@@ -50,7 +49,7 @@ export function AuctionCard({ auction }: { auction: Listing }) {
             <Link
               to="/auctions/$id"
               params={{ id: auction.id! }}
-              className="flex-1 text-lg font-semibold text-foreground/90 sm:text-xl"
+              className="display-title flex-1 text-lg font-semibold text-foreground/90 sm:text-xl"
             >
               {auction.title}
             </Link>
@@ -61,15 +60,7 @@ export function AuctionCard({ auction }: { auction: Listing }) {
               {auctionLocation(auction)}
             </span>
             <div className="flex flex-wrap gap-1.5">
-              <Badge
-                variant="outline"
-                title="sex"
-                className={
-                  auction.sex === GENDER_IDS.male
-                    ? 'border-cyan-300 text-cyan-700'
-                    : 'border-pink-300 text-pink-700'
-                }
-              >
+              <Badge variant="outline" title="sex">
                 {GENDERS.find((el) => el.value === auction.sex)?.label}
               </Badge>
               <Badge variant="outline" title="breed type">

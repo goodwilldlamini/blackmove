@@ -16,11 +16,11 @@ export function DetailRow({
   return (
     <div
       className={`flex w-full items-center gap-2 py-2.5 sm:gap-3 sm:py-3 ${
-        showDivider ? 'border-b border-gray-100' : ''
+        showDivider ? 'border-b border-border' : ''
       }`}
     >
       {icon && <SectionIconChip icon={icon} size="sm" />}
-      <span className="flex-1 truncate text-xs font-semibold tracking-wide text-gray-500 uppercase">
+      <span className="flex-1 truncate text-xs font-semibold tracking-wide text-muted-foreground uppercase">
         {label}
       </span>
       <span className="text-right text-xs font-bold capitalize sm:text-sm">

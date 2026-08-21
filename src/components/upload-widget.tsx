@@ -111,9 +111,12 @@ export function UploadWidget({
       )}
       <input
         ref={inputRef}
-        multiple
+        multiple={max !== 1}
         type="file"
-        accept="image/*,.pdf"
+        // mime prefixes like `image/` need the wildcard to work as an accept
+        accept={acceptedFileTypes
+          .map((type) => (type.endsWith('/') ? `${type}*` : type))
+          .join(',')}
         className="hidden"
         onChange={(e) => {
           e.preventDefault()
