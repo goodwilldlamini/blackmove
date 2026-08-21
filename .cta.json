@@ -15,7 +15,6 @@
   "framework": "react",
   "chosenAddOns": [
     "nitro",
-    "sentry",
     "form",
     "shadcn",
     "table"

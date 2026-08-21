@@ -6,11 +6,11 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "dotenv -e .env.local -- sh -c \"NODE_OPTIONS='--import ./instrument.server.mjs' vite dev --port 3000\"",
+    "dev": "dotenv -e .env.local -- vite dev --port 3000",
     "generate-routes": "tsr generate",
-    "build": "vite build && cp instrument.server.mjs .output/server",
+    "build": "vite build",
     "preview": "vite preview",
-    "start": "node --import ./.output/server/instrument.server.mjs .output/server/index.mjs"
+    "start": "node .output/server/index.mjs"
   },
   "dependencies": {
     "@faker-js/faker": "^10.3.0",
@@ -18,7 +18,6 @@
     "@fontsource-variable/manrope": "^5.3.0",
     "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@neodrag/core": "3.0.0-next.11",
-    "@sentry/tanstackstart-react": "^10.67.0",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/match-sorter-utils": "latest",
     "@tanstack/react-devtools": "latest",
@@ -63,8 +62,7 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
-      "lightningcss",
-      "@sentry/cli"
+      "lightningcss"
     ]
   }
 }

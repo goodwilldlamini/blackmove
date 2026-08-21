@@ -17,7 +17,7 @@ export function Hero() {
           <h1 className="display-title text-4xl font-extrabold text-white capitalize sm:text-6xl md:text-7xl">
             Your online livestock marketplace
           </h1>
-          <p className="text-sm font-bold text-primary-light sm:text-xl">
+          <p className="text-sm font-bold text-white text-primary-light sm:text-xl">
             Buy &amp; sell livestock from farmers &amp; buyers across South
             Africa
           </p>
