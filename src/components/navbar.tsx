@@ -18,7 +18,7 @@ import { userStore } from '#/state/user.store'
 import { MobileNav } from './mobile-nav'
 
 const NAVBAR_ITEMS = [
-  { title: 'auctions', route: ROUTES.auctions },
+  { title: 'listings', route: ROUTES.auctions },
   { title: 'about', route: ROUTES.about },
   { title: 'contact', route: ROUTES.contact },
   { title: 'FAQs', route: ROUTES.faq },

@@ -13,7 +13,7 @@ export function LatestAuctionsSection() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex w-full flex-col items-center gap-8">
           <h2 className="display-title text-xl font-semibold capitalize sm:text-3xl">
-            latest auctions
+            latest listings
           </h2>
           {liveAuctions.length === 0 ? (
             <p className="text-sm text-muted-foreground">
