@@ -20,7 +20,7 @@ const SELLING_POINTS = [
     title: 'reach buyers nationwide',
     color: 'success',
     icon: Globe,
-    desc: `Connect with farmers and buyers across the country from a single platform. Browse live auctions for cattle, sheep, goats, pigs, and poultry — or list your own stock and tap into a market far beyond your local sale yard.`,
+    desc: `Connect with farmers and buyers across the country from a single platform. Browse live listings for cattle, sheep, goats, pigs, and poultry — or list your own stock and tap into a market far beyond your local sale yard.`,
   },
 ] as const
 

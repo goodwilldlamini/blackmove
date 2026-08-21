@@ -11,7 +11,7 @@ export function OtherAuctions({ currentAuctionId }: { currentAuctionId?: string 
     <div className="mx-auto w-full max-w-6xl px-2 py-6 sm:px-0">
       <div className="flex w-full flex-col items-start gap-4">
         <h2 className="text-base font-semibold capitalize sm:text-xl">
-          Auctions closing soon
+          Listings closing soon
         </h2>
         <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-3">
           {others.map((auction) => (
