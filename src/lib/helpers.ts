@@ -145,6 +145,23 @@ export function highBid(auction: Listing): string {
   )
 }
 
+/**
+ * How far a listing is through its run, as a 0–100 percentage of the
+ * `createdAt → closeDate` window. Returns null when either date is missing
+ * (legacy docs, or a buy-now listing with no close date) — callers should omit
+ * the progress bar rather than render a fabricated one.
+ */
+export function listingProgress(auction: Listing): number | null {
+  const { createdAt, closeDate } = auction
+  if (!createdAt || !closeDate) return null
+
+  const total = closeDate.getTime() - createdAt.getTime()
+  if (total <= 0) return null
+
+  const elapsed = Date.now() - createdAt.getTime()
+  return Math.min(100, Math.max(0, (elapsed / total) * 100))
+}
+
 export function highBidAmount(auction: Listing): number {
   return auction.lastBid
     ? auction.lastBid.amount

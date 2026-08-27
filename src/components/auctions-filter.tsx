@@ -1,9 +1,5 @@
-import { FilterX } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Checkbox } from '#/components/ui/checkbox'
-import { Input } from '#/components/ui/input'
-import { Label } from '#/components/ui/label'
 import { Button } from '#/components/ui/button'
+import { Label } from '#/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -21,8 +17,20 @@ import {
 } from '#/lib/app-data'
 import { appStore } from '#/state/app.store'
 
-export function FilterWidget({ onReset }: { onReset: () => void }) {
-  const [searchStr, setSearchStr] = useState('')
+/**
+ * The full filter set, shown in the auctions sheet. Title search and the
+ * listing-kind quick filter live in `AuctionsFilterBar` instead — keeping a
+ * second search field here would give `searchArg` two owners.
+ */
+export function FilterWidget({
+  onReset,
+  onDone,
+  resultCount,
+}: {
+  onReset: () => void
+  onDone?: () => void
+  resultCount?: number
+}) {
   const searchArg = appStore((s) => s.searchArg)
   const searchCategory = appStore((s) => s.searchCategory)
   const searchProvince = appStore((s) => s.searchProvince)
@@ -40,23 +48,9 @@ export function FilterWidget({ onReset }: { onReset: () => void }) {
     !!searchSex ||
     !!searchKind
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      appStore.setState({ searchArg: searchStr })
-    }, 500)
-    return () => clearTimeout(timeout)
-  }, [searchStr])
-
   return (
-    <div className="flex w-full flex-col border-r">
-      <h2 className="px-4 pt-4 text-base font-semibold underline sm:text-lg">
-        Filters
-      </h2>
-      <div className="flex w-full flex-1 flex-col gap-6 p-4">
-        <div className="flex flex-col gap-1">
-          <Label>Search by title</Label>
-          <Input value={searchStr} onChange={(e) => setSearchStr(e.target.value)} />
-        </div>
+    <div className="flex min-h-0 w-full flex-1 flex-col">
+      <div className="flex w-full flex-1 flex-col gap-6 overflow-y-auto px-5 py-4">
         <SelectFilter
           label="listing type"
           value={searchKind}
@@ -87,40 +81,56 @@ export function FilterWidget({ onReset }: { onReset: () => void }) {
           onChange={(val) => appStore.setState({ searchBreedType: val })}
           options={BREED_TYPES}
         />
-        <div className="flex flex-col gap-2">
-          <Label>Production system</Label>
-          {PROD_SYSTEMS.map((opt) => (
-            <label key={opt.value} className="flex items-center gap-2 text-sm">
-              <Checkbox
-                checked={searchProdSystem.includes(opt.value)}
-                onCheckedChange={(checked) => {
-                  const next = checked
-                    ? [...searchProdSystem, opt.value]
-                    : searchProdSystem.filter((v) => v !== opt.value)
-                  appStore.setState({ searchProdSystem: next })
-                }}
-              />
-              {opt.label}
-            </label>
-          ))}
+        <div className="flex flex-col gap-2.5">
+          <FilterLabel>Production system</FilterLabel>
+          <div className="flex flex-wrap gap-2">
+            {PROD_SYSTEMS.map((opt) => {
+              const isActive = searchProdSystem.includes(opt.value)
+              return (
+                <Button
+                  key={opt.value}
+                  size="sm"
+                  variant={isActive ? 'default' : 'outline'}
+                  aria-pressed={isActive}
+                  onClick={() =>
+                    appStore.setState({
+                      searchProdSystem: isActive
+                        ? searchProdSystem.filter((v) => v !== opt.value)
+                        : [...searchProdSystem, opt.value],
+                    })
+                  }
+                >
+                  {opt.label}
+                </Button>
+              )
+            })}
+          </div>
         </div>
       </div>
-      <div className="sticky bottom-0 w-full bg-secondary p-4">
+      <div className="flex w-full shrink-0 items-center gap-3 border-t border-border bg-background px-5 py-4">
         <Button
           disabled={!isSearchEnabled}
-          variant="secondary"
-          size="lg"
-          className="w-full shadow-none"
-          onClick={() => {
-            setSearchStr('')
-            onReset()
-          }}
+          variant="outline"
+          onClick={onReset}
+          className="flex-1"
         >
-          <FilterX />
-          clear filters
+          Clear all
+        </Button>
+        <Button onClick={onDone} className="flex-1">
+          {resultCount === undefined
+            ? 'Done'
+            : `Show ${resultCount} ${resultCount === 1 ? 'listing' : 'listings'}`}
         </Button>
       </div>
     </div>
+  )
+}
+
+function FilterLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <Label className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+      {children}
+    </Label>
   )
 }
 
@@ -136,8 +146,8 @@ function SelectFilter({
   onChange: (value: string) => void
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <Label className="capitalize">{label}</Label>
+    <div className="flex flex-col gap-2">
+      <FilterLabel>{label}</FilterLabel>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="All" />

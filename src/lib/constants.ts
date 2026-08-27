@@ -1,4 +1,4 @@
-export const APP_NAME = 'LivestockAuctions'
+export const APP_NAME = 'LivestockSales'
 export const INSPECTION_COST = 150
 
 export const dashPrefix = '/dashboard'

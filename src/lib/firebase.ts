@@ -48,6 +48,7 @@ export const COLLECTIONS: {
 
 export const QUERIES = {
   users: query(COLLECTIONS.user, where('type', '!=', USER_TYPE_IDS.admin)),
+  allAuctions: query(COLLECTIONS.auction, orderBy('createdAt', 'desc')),
   liveAuctions: query(
     COLLECTIONS.auction,
     where('status', 'in', [
@@ -55,15 +56,19 @@ export const QUERIES = {
       STATUS_IDS.concluded,
       STATUS_IDS.concludedSold,
     ]),
-    orderBy('createdAt'),
+    orderBy('createdAt', 'desc'),
   ),
   myAuctions: (uid?: string) =>
-    query(COLLECTIONS.auction, where('uid', '==', uid), orderBy('createdAt')),
+    query(
+      COLLECTIONS.auction,
+      where('uid', '==', uid),
+      orderBy('createdAt', 'desc'),
+    ),
   savedAuctions: (uid: string) =>
     query(
       COLLECTIONS.auction,
       where('likes', 'array-contains', uid),
-      orderBy('createdAt'),
+      orderBy('createdAt', 'desc'),
     ),
   myNotifications: (uid?: string) =>
     query(
@@ -80,7 +85,7 @@ export const QUERIES = {
     query(
       COLLECTIONS.auction,
       where('bidUids', 'array-contains', uid),
-      orderBy('createdAt'),
+      orderBy('createdAt', 'desc'),
     ),
   myPurchaseOrders: (uid?: string) =>
     query(COLLECTIONS.order, where('buyerUid', '==', uid), orderBy('createdAt')),

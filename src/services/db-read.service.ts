@@ -56,7 +56,7 @@ class DbRead {
     })
   }
   listenToAllAuctions(calback: (auctions: Listing[]) => void) {
-    return onSnapshot(COLLECTIONS.auction, (snapshot) => {
+    return onSnapshot(QUERIES.allAuctions, (snapshot) => {
       calback(snapshot.docs.map((snap) => MODEL_CONV.auction(snap)!))
     })
   }

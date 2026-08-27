@@ -10,62 +10,63 @@
 :root {
   --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Plus Jakarta Sans', sans-serif;
-  --background: oklch(0.995 0.002 165);
-  --foreground: oklch(0.19 0.02 165);
+  --background: oklch(0.995 0 0);
+  --foreground: oklch(0.17 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.19 0.02 165);
+  --card-foreground: oklch(0.17 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.19 0.02 165);
+  --popover-foreground: oklch(0.17 0 0);
 
-  /* Brand palette (LivestockAuctions) — neutrals tied to the brand's green hue */
-  --primary: oklch(0.32 0.055 165);
-  --primary-foreground: oklch(0.985 0.004 165);
-  --secondary: oklch(0.96 0.012 165);
-  --secondary-foreground: oklch(0.32 0.055 165);
-  --muted: oklch(0.965 0.004 165);
-  --muted-foreground: oklch(0.47 0.015 165);
-  --accent: oklch(0.955 0.01 165);
-  --accent-foreground: oklch(0.25 0.02 165);
+  /* Brand palette (LivestockSales) — monochrome: black primary on white */
+  --primary: oklch(0.16 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0.16 0 0);
+  --muted: oklch(0.965 0 0);
+  --muted-foreground: oklch(0.47 0 0);
+  --accent: oklch(0.955 0 0);
+  --accent-foreground: oklch(0.22 0 0);
   --destructive: oklch(0.5 0.2 8);
-  --destructive-foreground: oklch(0.985 0.004 165);
-  --border: oklch(0.9 0.006 165);
-  --input: oklch(0.9 0.006 165);
-  --ring: oklch(0.5 0.065 165);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.9 0 0);
+  --ring: oklch(0.45 0 0);
 
   /* Brand status colors, additional to shadcn's base semantic set */
   --success: oklch(0.7 0.135 166);
   --success-foreground: oklch(0.26 0.05 166);
   --warning: oklch(0.63 0.155 48);
-  --warning-foreground: oklch(0.985 0.004 165);
+  --warning-foreground: oklch(0.985 0 0);
   --info: oklch(0.6 0.165 258);
-  --info-foreground: oklch(0.985 0.004 165);
-  --brand-accent: oklch(0.42 0.185 292);
-  --brand-accent-foreground: oklch(0.985 0.004 165);
+  --info-foreground: oklch(0.985 0 0);
+  --brand-accent: oklch(0.16 0 0);
+  --brand-accent-foreground: oklch(0.985 0 0);
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 }
 
 .dark {
-  --background: oklch(0.19 0.01 165);
-  --foreground: oklch(0.97 0.005 165);
-  --card: oklch(0.225 0.012 165);
-  --card-foreground: oklch(0.97 0.005 165);
-  --popover: oklch(0.225 0.012 165);
-  --popover-foreground: oklch(0.97 0.005 165);
+  --background: oklch(0.17 0 0);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.215 0 0);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.215 0 0);
+  --popover-foreground: oklch(0.97 0 0);
 
-  --primary: oklch(0.52 0.09 150);
-  --primary-foreground: oklch(0.99 0.005 150);
-  --secondary: oklch(0.27 0.012 165);
-  --secondary-foreground: oklch(0.97 0.005 165);
-  --muted: oklch(0.27 0.012 165);
-  --muted-foreground: oklch(0.72 0.015 165);
-  --accent: oklch(0.27 0.012 165);
-  --accent-foreground: oklch(0.97 0.005 165);
+  /* Inverted for contrast: white primary on black */
+  --primary: oklch(0.97 0 0);
+  --primary-foreground: oklch(0.17 0 0);
+  --secondary: oklch(0.27 0 0);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.27 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.27 0 0);
+  --accent-foreground: oklch(0.97 0 0);
   --destructive: oklch(0.58 0.19 8);
   --destructive-foreground: oklch(0.99 0.01 8);
-  --border: oklch(0.3 0.012 165);
-  --input: oklch(0.3 0.012 165);
-  --ring: oklch(0.62 0.1 150);
+  --border: oklch(0.3 0 0);
+  --input: oklch(0.3 0 0);
+  --ring: oklch(0.72 0 0);
 
   --success: oklch(0.7 0.14 166);
   --success-foreground: oklch(0.16 0.03 166);
@@ -73,8 +74,8 @@
   --warning-foreground: oklch(0.18 0.03 55);
   --info: oklch(0.66 0.15 258);
   --info-foreground: oklch(0.17 0.03 258);
-  --brand-accent: oklch(0.68 0.16 292);
-  --brand-accent-foreground: oklch(0.18 0.04 292);
+  --brand-accent: oklch(0.97 0 0);
+  --brand-accent-foreground: oklch(0.17 0 0);
 }
 
 @theme inline {
@@ -126,9 +127,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Display type — callers set their own weight (font-bold / font-extrabold). */
 .display-title {
   font-family: var(--font-display);
-  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 @layer base {

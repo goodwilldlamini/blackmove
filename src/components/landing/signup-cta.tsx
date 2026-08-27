@@ -6,7 +6,6 @@ export function SignUpCta() {
   return (
     <div
       className="w-full bg-cover bg-center bg-primary"
-      style={{ backgroundImage: 'url(/images/bg/home.jpeg)' }}
     >
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-12 sm:flex-row sm:justify-center">
         <div className="flex flex-1 flex-col items-center gap-2 sm:items-start">

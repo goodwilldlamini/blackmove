@@ -20,7 +20,6 @@ export function AuctionBids({ auction }: { auction: Listing }) {
     <SectionCard
       icon={Gavel}
       title="bids"
-      height="h-full"
       rightElement={
         <div className="flex items-center gap-1 text-muted-foreground">
           <Hash className="size-3" />
@@ -31,14 +30,14 @@ export function AuctionBids({ auction }: { auction: Listing }) {
       }
     >
       {bids.length < 1 && <EmptyWidget text={APP_MESSAGES.empty.bids} />}
-      <div className="flex max-h-92 w-full flex-1 flex-col gap-2 overflow-y-auto">
+      <div className="flex max-h-92 w-full flex-1 flex-col divide-y divide-border overflow-y-auto">
         {bids.map((bid, index) => {
           const isLeading = bid.amount === leadingAmount
           return (
             <div
               key={`${index}_${bid.uid}_${bid.amount}`}
-              className={`flex w-full items-center gap-3 rounded-xl border p-2.5 ${
-                isLeading ? 'border-primary bg-primary/10' : 'border-border'
+              className={`flex w-full items-center gap-3 py-3 ${
+                isLeading ? 'rounded-xl bg-muted px-3' : ''
               }`}
             >
               <Avatar>
@@ -61,8 +60,8 @@ export function AuctionBids({ auction }: { auction: Listing }) {
                 </span>
               </div>
               <span
-                className={`text-sm font-semibold sm:text-base ${
-                  isLeading ? 'text-primary' : 'text-foreground'
+                className={`text-sm sm:text-base ${
+                  isLeading ? 'font-extrabold' : 'font-semibold'
                 }`}
               >
                 {currencyFormat(bid.amount)}

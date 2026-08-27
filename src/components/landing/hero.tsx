@@ -14,25 +14,25 @@ export function Hero() {
     >
       <div className="flex w-full max-w-3xl flex-col items-center gap-6 text-center">
         <div className="flex flex-col items-center gap-2">
-          <h1 className="display-title text-4xl font-extrabold text-white capitalize sm:text-6xl md:text-7xl">
+          <h1 className="display-title text-5xl font-extrabold text-white capitalize md:text-7xl lg:text-8xl">
             Your online livestock marketplace
           </h1>
-          <p className="text-sm font-bold text-white text-primary-light sm:text-xl">
+          <p className="text-md font-bold text-white text-primary-light md:text-2xl">
             Buy &amp; sell livestock from farmers &amp; buyers across South
             Africa
           </p>
         </div>
-        <WatchButton title="selling on LivestockAuctions" />
+        {/* <WatchButton title="selling on LivestockAuctions" /> */}
         <Link
           to={ROUTES.auctions}
           className="group flex w-max items-center gap-1 rounded-full bg-gray-300/90 p-1 text-sm hover:bg-primary hover:text-white"
         >
           <span className="rounded-full bg-primary px-3 py-1 text-xs leading-none text-white sm:text-sm">
-            Browse auctions
+            Browse listings
           </span>
           <span className="flex items-center gap-1 px-1 text-primary group-hover:text-white">
             <span className="text-xs sm:text-sm">
-              See what auctions are currently live
+              See what listings are currently live
             </span>
             <ChevronRight className="size-4" />
           </span>

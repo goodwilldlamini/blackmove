@@ -1,14 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import {
+  AuctionActionPanel,
+  AuctionCta,
+} from '#/components/auction-detail/action-panel'
 import { AuctionBids } from '#/components/auction-detail/bids-panel'
 import { AuctionDetailsBody } from '#/components/auction-detail/details'
 import { AuctionGallery } from '#/components/auction-detail/gallery'
 import { OtherAuctions } from '#/components/auction-detail/other-auctions'
-import { AuctionDetailsTopBar } from '#/components/auction-detail/top-bar'
 import { TopControls } from '#/components/auction-detail/top-controls'
 import { Skeleton } from '#/components/ui/skeleton'
-import { LISTING_KIND_IDS } from '#/lib/app-data'
+import { LISTING_KIND_IDS, STATUS_IDS } from '#/lib/app-data'
 import { publicStore } from '#/state/public.store'
 
 export const Route = createFileRoute('/_public/auctions/$id')({
@@ -78,52 +81,56 @@ function AuctionDetailPage() {
   }
 
   const isBuyNow = currentAuction.kind === LISTING_KIND_IDS.buyNow
+  // an auction that isn't published renders no CTA, so the mobile bar would
+  // otherwise be an empty bordered strip
+  const hasCta = isBuyNow || currentAuction.status === STATUS_IDS.published
 
   return (
     <div className="flex w-full flex-col">
-      <div className="hidden sm:block">
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
         <TopControls auction={currentAuction} />
-      </div>
-      <AuctionGallery auction={currentAuction} />
-      <div className="sm:hidden">
-        <TopControls auction={currentAuction} />
-      </div>
 
-      <div className="mx-auto w-full max-w-6xl px-2 py-4 sm:px-0">
-        <div className="flex w-full flex-col gap-4">
-          <AuctionDetailsTopBar auction={currentAuction} seller={seller} />
-          <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-5">
-            <div className={isBuyNow ? 'sm:col-span-5' : 'sm:col-span-3'}>
-              <AuctionDetailsBody auction={currentAuction} />
+        <div className="mt-6 grid w-full grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
+          {/* on small screens the money and CTA come before the detail body */}
+          <aside className="flex flex-col gap-6 lg:order-2 lg:col-span-1">
+            <div className="flex flex-col gap-6 lg:sticky lg:top-20">
+              <AuctionActionPanel auction={currentAuction} seller={seller} />
+              {!isBuyNow && <AuctionBids auction={currentAuction} />}
             </div>
-            {!isBuyNow && (
-              <div className="sm:col-span-2">
-                <AuctionBids auction={currentAuction} />
-              </div>
-            )}
+          </aside>
+
+          <div className="flex flex-col gap-8 lg:order-1 lg:col-span-2">
+            <AuctionGallery auction={currentAuction} />
+            <AuctionDetailsBody auction={currentAuction} />
           </div>
         </div>
       </div>
 
       <OtherAuctions currentAuctionId={currentAuction.id} />
+
+      {/* the CTA stays reachable while scrolling on small screens */}
+      {hasCta && (
+        <div className="sticky bottom-0 z-10 w-full border-t border-border bg-background/95 px-4 py-3 backdrop-blur lg:hidden">
+          <AuctionCta auction={currentAuction} className="w-full" />
+        </div>
+      )}
     </div>
   )
 }
 
 function AuctionDetailSkeleton() {
   return (
-    <div className="flex w-full flex-col">
-      <Skeleton className="aspect-video w-full rounded-none sm:mx-auto sm:aspect-21/9 sm:max-w-6xl sm:rounded-xl" />
-      <div className="mx-auto w-full max-w-6xl px-2 py-4 sm:px-0">
-        <div className="flex w-full flex-col gap-4">
-          <Skeleton className="h-20 w-full rounded-2xl sm:h-24" />
-          <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-5">
-            <div className="flex flex-col gap-4 sm:col-span-3">
-              <Skeleton className="h-40 w-full rounded-xl" />
-              <Skeleton className="h-56 w-full rounded-xl" />
-            </div>
-            <Skeleton className="h-64 w-full rounded-xl sm:col-span-2" />
-          </div>
+    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+      <Skeleton className="h-9 w-2/3 sm:h-12" />
+      <Skeleton className="mt-3 h-4 w-40" />
+      <div className="mt-6 grid w-full grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
+        <div className="flex flex-col gap-6 lg:order-2 lg:col-span-1">
+          <Skeleton className="h-64 w-full rounded-2xl" />
+        </div>
+        <div className="flex flex-col gap-8 lg:order-1 lg:col-span-2">
+          <Skeleton className="aspect-16/10 w-full rounded-2xl" />
+          <Skeleton className="h-32 w-full rounded-xl" />
+          <Skeleton className="h-48 w-full rounded-xl" />
         </div>
       </div>
     </div>

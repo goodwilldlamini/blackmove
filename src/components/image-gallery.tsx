@@ -9,7 +9,7 @@ export function ImageGallery({ images }: { images: string[] }) {
 
   return (
     <div className="w-full pb-4">
-      <div className="grid grid-cols-5 grid-rows-3 gap-1 sm:gap-2">
+      <div className="grid grid-cols-5 grid-rows-3 gap-2">
         <button
           type="button"
           onClick={() => setLightboxIndex(0)}
@@ -18,7 +18,7 @@ export function ImageGallery({ images }: { images: string[] }) {
           <img
             src={images[0]}
             alt=""
-            className="size-full rounded-xl object-cover"
+            className="size-full rounded-2xl object-cover"
           />
         </button>
         {images.slice(1, 6).map((src, i) => {
@@ -28,16 +28,16 @@ export function ImageGallery({ images }: { images: string[] }) {
             <button
               type="button"
               key={src}
-              onClick={() => setLightboxIndex(0)}
+              onClick={() => setLightboxIndex(index)}
               className="relative"
             >
               <img
                 src={src}
                 alt=""
-                className="size-full rounded-xl object-cover"
+                className="size-full rounded-2xl object-cover"
               />
               {isLast && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/50">
+                <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/50">
                   <span className="text-lg font-extrabold text-white sm:text-2xl">
                     See all Photos ({images.length})
                   </span>

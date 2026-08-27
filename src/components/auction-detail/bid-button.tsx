@@ -27,7 +27,13 @@ import type { EdUser } from '#/types/user'
 
 const INCREMENTS = [0, 0.05, 0.1, 0.2, 0.25]
 
-export function BidButton({ auction }: { auction: Listing }) {
+export function BidButton({
+  auction,
+  className,
+}: {
+  auction: Listing
+  className?: string
+}) {
   const navigate = useNavigate()
   const user = userStore((s) => s.user)
   const [showLoginPrompt, setShowLoginPrompt] = useState(false)
@@ -48,7 +54,7 @@ export function BidButton({ auction }: { auction: Listing }) {
 
   return (
     <>
-      <Button onClick={onPlaceBidClick} size="lg">
+      <Button onClick={onPlaceBidClick} size="lg" className={className}>
         Place bid
       </Button>
 
@@ -143,7 +149,7 @@ function BidModal({
           <DialogTitle>Place Bid</DialogTitle>
         </DialogHeader>
         <div className="flex w-full flex-col items-center gap-6 py-4">
-          <h2 className="display-title text-3xl font-semibold">{currencyFormat(newAmount)}</h2>
+          <h2 className="display-title text-3xl font-extrabold">{currencyFormat(newAmount)}</h2>
           <div className="w-full px-2">
             <Slider
               value={[sliderIndex * 25]}

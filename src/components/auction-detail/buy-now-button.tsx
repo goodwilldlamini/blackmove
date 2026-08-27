@@ -27,7 +27,13 @@ import { appStore } from '#/state/app.store'
 import { userStore } from '#/state/user.store'
 import type { Listing } from '#/types/auction'
 
-export function BuyNowButton({ auction }: { auction: Listing }) {
+export function BuyNowButton({
+  auction,
+  className,
+}: {
+  auction: Listing
+  className?: string
+}) {
   const navigate = useNavigate()
   const user = userStore((s) => s.user)
   const myPurchaseOrders = userStore((s) => s.myPurchaseOrders)
@@ -65,14 +71,14 @@ export function BuyNowButton({ auction }: { auction: Listing }) {
   function trigger() {
     if (isOwnListing) {
       return (
-        <Button size="lg" disabled>
+        <Button size="lg" className={className} disabled>
           Your listing
         </Button>
       )
     }
     if (auction.status === STATUS_IDS.concludedSold) {
       return (
-        <Button size="lg" disabled>
+        <Button size="lg" className={className} disabled>
           Sold
         </Button>
       )
@@ -82,27 +88,27 @@ export function BuyNowButton({ auction }: { auction: Listing }) {
       if (myOrder?.status === ORDER_STATUS_IDS.pendingPayment &&
         myOrder.paymentMethod === ORDER_PAYMENT_METHOD_IDS.eft) {
         return (
-          <Button size="lg" onClick={() => setEftOrderId(auction.orderId!)}>
+          <Button size="lg" className={className} onClick={() => setEftOrderId(auction.orderId!)}>
             Complete payment
           </Button>
         )
       }
       if (myOrder?.status === ORDER_STATUS_IDS.awaitingEftConfirmation) {
         return (
-          <Button size="lg" disabled>
+          <Button size="lg" className={className} disabled>
             Payment pending
           </Button>
         )
       }
       return (
-        <Button size="lg" disabled>
+        <Button size="lg" className={className} disabled>
           Reserved
         </Button>
       )
     }
     if (auction.status === STATUS_IDS.published) {
       return (
-        <Button onClick={onBuyNowClick} size="lg">
+        <Button onClick={onBuyNowClick} size="lg" className={className}>
           Buy now
         </Button>
       )
@@ -272,7 +278,7 @@ function BuyNowModal({
         <div className="flex w-full flex-col gap-6 py-2">
           <div className="flex flex-col items-center gap-1">
             <span className="text-sm text-muted-foreground">Total due</span>
-            <h2 className="display-title text-3xl font-semibold">{currencyFormat(amount)}</h2>
+            <h2 className="display-title text-3xl font-extrabold">{currencyFormat(amount)}</h2>
           </div>
           <div className="flex flex-col gap-2">
             <Label>How would you like to pay?</Label>

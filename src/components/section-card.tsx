@@ -26,14 +26,37 @@ export function SectionCard({
   icon,
   rightElement,
   height,
+  variant = 'card',
   children,
 }: {
   title: string
   icon: LucideIcon
   rightElement?: ReactNode
   height?: string
+  /**
+   * `card` is the boxed treatment used across the dashboard and wizard.
+   * `plain` drops the box and icon chip for a heading over a hairline rule —
+   * the section rhythm used on the public listing detail page.
+   */
+  variant?: 'card' | 'plain'
   children: ReactNode
 }) {
+  if (variant === 'plain') {
+    return (
+      <section
+        className={`flex w-full flex-col items-start gap-4 border-t border-border pt-6 ${height || ''}`}
+      >
+        <div className="flex w-full items-center gap-3">
+          <h2 className="display-title flex-1 text-xl font-bold capitalize">
+            {title}
+          </h2>
+          {rightElement}
+        </div>
+        {children}
+      </section>
+    )
+  }
+
   return (
     <div
       className={`w-full rounded-none border-0 bg-card p-4 shadow-none sm:rounded-xl sm:border sm:p-6 ${height || ''}`}

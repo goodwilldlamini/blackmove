@@ -7,7 +7,7 @@ export function Banner({ title }: { title: string }) {
       }}
     >
       <div className="rounded-xl bg-black/50 px-6 py-4">
-        <h1 className="display-title text-xs text-white/90 capitalize sm:text-sm">
+        <h1 className="display-title text-xs font-bold text-white/90 capitalize sm:text-sm">
           {title}
         </h1>
       </div>

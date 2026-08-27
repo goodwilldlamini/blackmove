@@ -10,10 +10,10 @@ export function AuctionGallery({ auction }: { auction: Listing }) {
 
   return (
     <div className="w-full">
-      <div className="sm:hidden">
+      <div className="overflow-hidden rounded-2xl sm:hidden">
         <MediaCarousel images={images} autoPlay />
       </div>
-      <div className="mx-auto hidden max-w-6xl sm:block">
+      <div className="hidden sm:block">
         <ImageGallery images={images} />
       </div>
     </div>

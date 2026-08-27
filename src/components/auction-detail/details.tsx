@@ -1,17 +1,6 @@
-import {
-  Calendar,
-  Feather,
-  Hash,
-  Info,
-  List,
-  ShieldCheck,
-  Sprout,
-  Syringe,
-  Tag,
-  UserRound,
-} from 'lucide-react'
+import { Calendar, Info, List, ShieldCheck, Tag } from 'lucide-react'
 import { DetailRow } from '#/components/detail-row'
-import { SectionCard, SectionIconChip } from '#/components/section-card'
+import { SectionCard } from '#/components/section-card'
 import {
   AGE_CLASSES,
   BREEDS,
@@ -37,9 +26,11 @@ function mapLabels(
 
 export function AuctionDetailsBody({ auction }: { auction: Listing }) {
   return (
-    <div className="flex w-full flex-col gap-4">
-      <SectionCard icon={List} title="Description">
-        <p>{auction.desc}</p>
+    <div className="flex w-full flex-col gap-8">
+      <SectionCard icon={List} title="Description" variant="plain">
+        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+          {auction.desc}
+        </p>
       </SectionCard>
       <GeneralDetails auction={auction} />
       <DetailsBox auction={auction} />
@@ -66,24 +57,21 @@ function GeneralDetails({ auction }: { auction: Listing }) {
   ]
 
   return (
-    <SectionCard icon={Info} title="general">
+    <SectionCard icon={Info} title="general" variant="plain">
       <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3">
         {details.map((detail) => (
           <div
             key={detail.label}
-            className="flex items-center gap-3 rounded-xl bg-muted p-3"
+            className="flex min-w-0 flex-col gap-1 rounded-2xl bg-muted p-4"
           >
-            <SectionIconChip icon={detail.icon} />
-            <div className="flex min-w-0 flex-1 flex-col gap-0">
-              <span className="text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
-                {detail.label}
-              </span>
-              <span
-                className={`truncate text-xs font-bold capitalize sm:text-sm ${detail.valueClass || 'text-foreground'}`}
-              >
-                {detail.value}
-              </span>
-            </div>
+            <span className="text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
+              {detail.label}
+            </span>
+            <span
+              className={`truncate text-sm font-bold capitalize ${detail.valueClass || 'text-foreground'}`}
+            >
+              {detail.value}
+            </span>
           </div>
         ))}
       </div>
@@ -92,36 +80,27 @@ function GeneralDetails({ auction }: { auction: Listing }) {
 }
 
 function DetailsBox({ auction }: { auction: Listing }) {
-  const details: {
-    label: string
-    value: string | undefined
-    icon: typeof Info
-  }[] = [
+  const details: { label: string; value: string | undefined }[] = [
     {
       label: 'type',
       value: CATEGORIES.find((el) => el.value === auction.category)?.label,
-      icon: Hash,
     },
-    { label: 'Quantity', value: `${auction.quantity} units`, icon: Hash },
+    { label: 'Quantity', value: `${auction.quantity} units` },
     {
       label: 'sex',
       value: GENDERS.find((el) => el.value === auction.sex)?.label,
-      icon: UserRound,
     },
     {
       label: 'age class',
       value: AGE_CLASSES.find((el) => el.value === auction.ageClass)?.label,
-      icon: List,
     },
     {
       label: 'breed type',
       value: BREED_TYPES.find((el) => el.value === auction.breedType)?.label,
-      icon: List,
     },
     {
       label: 'breed',
       value: BREEDS.find((el) => el.value === auction.breed)?.label,
-      icon: Feather,
     },
   ]
 
@@ -129,7 +108,6 @@ function DetailsBox({ auction }: { auction: Listing }) {
     details.push({
       label: 'breed 2',
       value: BREEDS.find((el) => el.value === auction.breed2)?.label,
-      icon: Feather,
     })
   }
 
@@ -137,7 +115,6 @@ function DetailsBox({ auction }: { auction: Listing }) {
     {
       label: 'production system',
       value: mapLabels(auction.prodSystems, PROD_SYSTEMS),
-      icon: Sprout,
     },
     {
       label: 'vaccines',
@@ -145,17 +122,15 @@ function DetailsBox({ auction }: { auction: Listing }) {
         auction.vaccines && auction.vaccines.length > 0
           ? mapLabels(auction.vaccines, VACCINES)
           : 'Not specified',
-      icon: Syringe,
     },
   )
 
   return (
-    <SectionCard icon={Info} title="Details">
-      <div className="grid w-full grid-cols-1 gap-x-6 sm:grid-cols-2">
+    <SectionCard icon={Info} title="Details" variant="plain">
+      <div className="grid w-full grid-cols-1 gap-x-8 sm:grid-cols-2">
         {details.map((detail, index) => (
           <DetailRow
             key={`${detail.label}_${index}`}
-            icon={detail.icon}
             label={detail.label}
             value={detail.value}
           />
