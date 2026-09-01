@@ -109,14 +109,14 @@ export const HOW_IT_WORKS_STEPS: { id: string; steps: HIW_STEP[] }[] = [
       {
         order: 1,
         icon: Wallet,
-        desc: 'You will be requested to provide a standard security deposit before bidding',
+        desc: 'A standard security deposit is required once - it unlocks both bidding and buy now',
         title: 'Place deposit',
       },
       {
         order: 2,
         icon: ThumbsUp,
-        desc: 'You can start placing bids and winning big! :smile',
-        title: 'Start bidding',
+        desc: 'Bid on an auction and win the lot, or pay the fixed price on a buy now listing and take it right away',
+        title: 'Bid or buy now',
       },
     ],
   },
@@ -138,7 +138,7 @@ export const HOW_IT_WORKS_STEPS: { id: string; steps: HIW_STEP[] }[] = [
       {
         order: 2,
         icon: ThumbsUp,
-        desc: 'You can start selling! Note: all auction go through a review process before launch',
+        desc: 'List your stock as an auction or at a fixed buy now price. Note: every listing goes through a review process before it goes live',
         title: 'Start selling',
       },
     ],
