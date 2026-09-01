@@ -14,31 +14,31 @@ const SECTIONS = [
     label: 'buying',
     image: '/images/about/1.jpg',
     steps: [
-      `Ad labore minim excepteur consectetur.`,
-      `Cillum ut enim irure eu anim deserunt irure officia dolor cupidatat.`,
-      `Aliqua anim do officia ad sunt esse sint occaecat ipsum.`,
+      `Sign up, then place the one-off security deposit that unlocks both ways to buy`,
+      `Auctions: place your bid before the timer runs out - the highest bid at close wins the lot`,
+      `Buy now: pay the fixed price and the lot is yours, no bidding and no waiting`,
     ],
-    desc: 'Dolore aute velit qui sint magna eiusmod. Cupidatat exercitation aliquip sunt laborum enim sit. Occaecat aliqua est dolor nostrud consequat est ullamco aliqua nulla aute eiusmod tempor sunt sint. Sit eu incididunt culpa consectetur aliqua labore aliquip deserunt commodo reprehenderit.',
+    desc: `Every lot on ${APP_NAME} is sold one of two ways, and you can see which at a glance while you browse. Live auctions let you compete for stock and set the price yourselves, while buy now listings carry a single fixed price for buyers who would rather not wait for a timer. The same deposit covers you for both, so you are free to bid on one lot and buy another outright.`,
   },
   {
     label: 'selling',
     image: '/images/about/2.jpg',
     steps: [
-      `Do ea nulla excepteur non voluptate sunt sint in ea aliquip.`,
-      `Aute culpa est labore ut aliqua ea velit.`,
-      `Nostrud est enim velit ea dolore qui velit anim sit id veniam.`,
+      `Sign up and upload your supporting documents for verification`,
+      `Create your listing - run it as an auction, or set one fixed buy now price`,
+      `We review every listing before it goes live, so buyers only ever see vetted stock`,
     ],
-    desc: 'Enim voluptate minim cillum ea in nisi qui excepteur fugiat et reprehenderit ex. Occaecat qui id ea amet fugiat commodo id cillum eu deserunt cupidatat. Eu aliqua sit dolor consequat pariatur est. Deserunt laborum laborum magna aliqua labore proident ullamco Lorem mollit fugiat sunt non. Eiusmod anim ad elit aliqua ea est in exercitation irure cupidatat ad adipisicing nisi.',
+    desc: `Once our team has verified your profile and documents you can list stock in minutes. Choose an auction when you want buyers to compete and the market to set your price, or choose buy now when you know what the lot is worth and want the first buyer who pays to take it. Either way you keep full control of your minimum price, the details buyers see, and when the listing goes out.`,
   },
   {
     label: 'finalizing a sale',
     image: '/images/about/3.jpg',
     steps: [
-      `Ad labore minim excepteur consectetur.`,
-      `Cillum ut enim irure eu anim deserunt irure officia dolor cupidatat.`,
-      `Aliqua anim do officia ad sunt esse sint occaecat ipsum.`,
+      `Pay by card for instant confirmation, or by EFT and upload your proof of payment`,
+      `The driver inspects and verifies the livestock through the app before loading`,
+      `You verify the delivery on arrival, and the seller is paid within 7 days of removal`,
     ],
-    desc: 'Dolore aute velit qui sint magna eiusmod. Cupidatat exercitation aliquip sunt laborum enim sit. Occaecat aliqua est dolor nostrud consequat est ullamco aliqua nulla aute eiusmod tempor sunt sint. Sit eu incididunt culpa consectetur aliqua labore aliquip deserunt commodo reprehenderit.',
+    desc: `Winning a bid and clicking buy now lead to the same place: a single order you settle through ${APP_NAME}. A buy now listing is reserved for you the moment you claim it, giving you a window to complete payment before it opens back up to other buyers. From there both routes follow one process - payment, inspection at loading, verification on arrival, and payout to the seller.`,
   },
 ]
 
