@@ -10,6 +10,7 @@ import {
   PROD_SYSTEMS,
   PROVINCES,
 } from '#/lib/app-data'
+import { isAuctionFeatureActive } from '#/lib/feature-flags'
 import { appStore } from '#/state/app.store'
 
 /** Search field, listing-kind quick filters, and the "all filters" trigger. */
@@ -54,21 +55,24 @@ export function AuctionsFilterBar({
         </Button>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <KindPill
-          label="All"
-          isActive={!searchKind}
-          onClick={() => appStore.setState({ searchKind: '' })}
-        />
-        {LISTING_KINDS.map((kind) => (
+      {/* with auctions off there is only one kind left, so the pills say nothing */}
+      {isAuctionFeatureActive && (
+        <div className="flex flex-wrap gap-2">
           <KindPill
-            key={kind.value}
-            label={kind.label}
-            isActive={searchKind === kind.value}
-            onClick={() => appStore.setState({ searchKind: kind.value })}
+            label="All"
+            isActive={!searchKind}
+            onClick={() => appStore.setState({ searchKind: '' })}
           />
-        ))}
-      </div>
+          {LISTING_KINDS.map((kind) => (
+            <KindPill
+              key={kind.value}
+              label={kind.label}
+              isActive={searchKind === kind.value}
+              onClick={() => appStore.setState({ searchKind: kind.value })}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

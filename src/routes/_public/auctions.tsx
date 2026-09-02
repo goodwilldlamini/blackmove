@@ -10,6 +10,7 @@ import {
 import { Button } from '#/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '#/components/ui/sheet'
 import { Skeleton } from '#/components/ui/skeleton'
+import { isAuctionFeatureActive } from '#/lib/feature-flags'
 import { appStore } from '#/state/app.store'
 import { publicStore } from '#/state/public.store'
 import type { Listing } from '#/types/auction'
@@ -95,8 +96,9 @@ function AuctionsListPage() {
               Livestock listings
             </h1>
             <p className="max-w-xl text-sm text-muted-foreground sm:text-base">
-              Browse live auctions and buy-now listings from farmers and buyers
-              across South Africa.
+              {isAuctionFeatureActive
+                ? 'Browse live auctions and buy-now listings from farmers and buyers across South Africa.'
+                : 'Browse fixed-price livestock listings from farmers and buyers across South Africa.'}
             </p>
           </div>
           <AuctionsFilterBar onOpenFilters={() => setFiltersOpen(true)} />

@@ -12,6 +12,7 @@ import { OtherAuctions } from '#/components/auction-detail/other-auctions'
 import { TopControls } from '#/components/auction-detail/top-controls'
 import { Skeleton } from '#/components/ui/skeleton'
 import { LISTING_KIND_IDS, STATUS_IDS } from '#/lib/app-data'
+import { isAuctionFeatureActive } from '#/lib/feature-flags'
 import { publicStore } from '#/state/public.store'
 
 export const Route = createFileRoute('/_public/auctions/$id')({
@@ -34,8 +35,12 @@ function AuctionDetailPage() {
 
       const auction = await dbRead.getAuctionData(id)
       if (cancelled) return
-      if (!auction) {
-        setError(`Sorry, we couldn't find the auction you're looking for`)
+      // auction listings are hidden from buyers while the flag is off, so a
+      // direct link to one has to dead-end the same way a bad id does
+      const isHiddenAuction =
+        !isAuctionFeatureActive && auction?.kind !== LISTING_KIND_IDS.buyNow
+      if (!auction || isHiddenAuction) {
+        setError(`Sorry, we couldn't find the listing you're looking for`)
         setIsFetching(false)
         return
       }
@@ -95,7 +100,9 @@ function AuctionDetailPage() {
           <aside className="flex flex-col gap-6 lg:order-2 lg:col-span-1">
             <div className="flex flex-col gap-6 lg:sticky lg:top-20">
               <AuctionActionPanel auction={currentAuction} seller={seller} />
-              {!isBuyNow && <AuctionBids auction={currentAuction} />}
+              {isAuctionFeatureActive && !isBuyNow && (
+                <AuctionBids auction={currentAuction} />
+              )}
             </div>
           </aside>
 

@@ -15,6 +15,7 @@ import {
   PROD_SYSTEMS,
   PROVINCES,
 } from '#/lib/app-data'
+import { isAuctionFeatureActive } from '#/lib/feature-flags'
 import { appStore } from '#/state/app.store'
 
 /**
@@ -51,12 +52,15 @@ export function FilterWidget({
   return (
     <div className="flex min-h-0 w-full flex-1 flex-col">
       <div className="flex w-full flex-1 flex-col gap-6 overflow-y-auto px-5 py-4">
-        <SelectFilter
-          label="listing type"
-          value={searchKind}
-          onChange={(val) => appStore.setState({ searchKind: val })}
-          options={LISTING_KINDS}
-        />
+        {/* only worth showing while there is more than one kind to pick from */}
+        {isAuctionFeatureActive && (
+          <SelectFilter
+            label="listing type"
+            value={searchKind}
+            onChange={(val) => appStore.setState({ searchKind: val })}
+            options={LISTING_KINDS}
+          />
+        )}
         <SelectFilter
           label="province"
           value={searchProvince}

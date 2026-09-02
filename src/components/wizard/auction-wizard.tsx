@@ -30,6 +30,7 @@ import {
 } from '#/lib/app-data'
 import { APP_MESSAGES } from '#/lib/app-messages'
 import { ROUTES } from '#/lib/constants'
+import { isAuctionFeatureActive } from '#/lib/feature-flags'
 import { DBTABLES, fsStore } from '#/lib/firebase'
 import { toast } from '#/lib/toast'
 import { numberValidator, requiredValidator, zodFormValidator } from '#/lib/validators'
@@ -40,6 +41,10 @@ import { ImagesStep } from './images-step'
 
 type WizardCategory = (typeof CATEGORIES)[number]
 type WizardKind = (typeof LISTING_KINDS)[number]
+
+const BUY_NOW_KIND = LISTING_KINDS.find(
+  (el) => el.value === LISTING_KIND_IDS.buyNow,
+)!
 
 const schema = z.object({
   title: requiredValidator,
@@ -67,7 +72,11 @@ export function AuctionWizard({ auctionId: editingId }: { auctionId?: string }) 
   const updateTempAuction = tempStore((s) => s.updateTempAuction)
 
   const isEditing = !!editingId
-  const [kind, setKind] = useState<WizardKind | null>(null)
+  // with auctions switched off there is only one way to sell, so the kind gate
+  // is skipped and every new listing starts out as buy-now
+  const [kind, setKind] = useState<WizardKind | null>(
+    isAuctionFeatureActive ? null : BUY_NOW_KIND,
+  )
   const [category, setCategory] = useState<WizardCategory | null>(null)
   const isBuyNow = kind?.value === LISTING_KIND_IDS.buyNow
   const [generatedId, setGeneratedId] = useState('')
@@ -208,7 +217,8 @@ export function AuctionWizard({ auctionId: editingId }: { auctionId?: string }) 
     return (
       <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-4 py-6">
         <h1 className="text-center text-xl font-semibold capitalize sm:text-3xl">
-          New {kind.label}: Pick Your category
+          New {isAuctionFeatureActive ? kind.label : 'Listing'}: Pick Your
+          category
         </h1>
         <CategorySelector onSelect={onCategorySelected} />
       </div>

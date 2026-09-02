@@ -1,0 +1,2 @@
+
+export const isAuctionFeatureActive = false

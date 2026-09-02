@@ -1,5 +1,6 @@
 import type { Unsubscribe } from 'firebase/firestore'
-import { USER_TYPE_IDS } from '#/lib/app-data'
+import { LISTING_KIND_IDS, USER_TYPE_IDS } from '#/lib/app-data'
+import { isAuctionFeatureActive } from '#/lib/feature-flags'
 import { mainStore } from '#/state/main.store'
 import { publicStore } from '#/state/public.store'
 import { userStore } from '#/state/user.store'
@@ -124,7 +125,15 @@ class DbService {
 
   listenToGlobalData() {
     const auctionsSub = dbRead.listenToLiveAuctions((liveAuctions) => {
-      publicStore.setState({ liveAuctions })
+      // every buyer-facing list reads this slice, so filtering here is the one
+      // place that keeps auction listings out of view while the flag is off.
+      // legacy docs carry no `kind` - the model converter reads those as
+      // auctions, so they are hidden too
+      publicStore.setState({
+        liveAuctions: isAuctionFeatureActive
+          ? liveAuctions
+          : liveAuctions.filter((el) => el.kind === LISTING_KIND_IDS.buyNow),
+      })
     })
 
     this.subscriptions = [auctionsSub]

@@ -4,12 +4,13 @@ import { Banner } from '#/components/banner'
 import { SafetyBanner } from '#/components/safety-banner'
 import { WhyUsSection } from '#/components/why-us-section'
 import { APP_NAME } from '#/lib/constants'
+import { isAuctionFeatureActive } from '#/lib/feature-flags'
 
 export const Route = createFileRoute('/_public/about')({
   component: AboutPage,
 })
 
-const SECTIONS = [
+const AUCTION_SECTIONS = [
   {
     label: 'buying',
     image: '/images/about/1.jpg',
@@ -41,6 +42,41 @@ const SECTIONS = [
     desc: `Winning a bid and clicking buy now lead to the same place: a single order you settle through ${APP_NAME}. A buy now listing is reserved for you the moment you claim it, giving you a window to complete payment before it opens back up to other buyers. From there both routes follow one process - payment, inspection at loading, verification on arrival, and payout to the seller.`,
   },
 ]
+
+const BUY_NOW_SECTIONS = [
+  {
+    label: 'buying',
+    image: '/images/about/1.jpg',
+    steps: [
+      `Sign up, then place the one-off security deposit that lets you buy`,
+      `Browse by category, province, breed or production system to find your lot`,
+      `Pay the listed price and the lot is yours - no bidding and no waiting`,
+    ],
+    desc: `Every lot on ${APP_NAME} carries one fixed price, so there is nothing to work out and nothing to wait for. Find the stock you want, check the photos, weights, breed and vaccination details on the listing, and pay. A one-off security deposit is all that stands between signing up and buying, and it only ever has to be paid once.`,
+  },
+  {
+    label: 'selling',
+    image: '/images/about/2.jpg',
+    steps: [
+      `Sign up and upload your supporting documents for verification`,
+      `Create your listing and set the price you want for the lot`,
+      `We review every listing before it goes live, so buyers only ever see vetted stock`,
+    ],
+    desc: `Once our team has verified your profile and documents you can list stock in minutes. You set the price, the details buyers see, and when the listing goes out - the first buyer to pay takes the lot. You can leave a listing up until it sells, or give it an expiry date if the stock is only available for a while.`,
+  },
+  {
+    label: 'finalizing a sale',
+    image: '/images/about/3.jpg',
+    steps: [
+      `Pay by card for instant confirmation, or by EFT and upload your proof of payment`,
+      `The driver inspects and verifies the livestock through the app before loading`,
+      `You verify the delivery on arrival, and the seller is paid within 7 days of removal`,
+    ],
+    desc: `Claiming a lot opens a single order you settle through ${APP_NAME}, and the listing is reserved for you the moment you claim it - giving you a window to complete payment before it opens back up to other buyers. From there the process is the same every time: payment, inspection at loading, verification on arrival, and payout to the seller.`,
+  },
+]
+
+const SECTIONS = isAuctionFeatureActive ? AUCTION_SECTIONS : BUY_NOW_SECTIONS
 
 function AboutPage() {
   return (

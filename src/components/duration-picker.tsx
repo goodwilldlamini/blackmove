@@ -85,7 +85,7 @@ export function DurationPicker() {
         />
       </div>
       <p className="text-xs text-gray-400">
-        This is how long your auction will run after it is approved
+        This is how long your listing will run after it is approved
       </p>
     </div>
   )

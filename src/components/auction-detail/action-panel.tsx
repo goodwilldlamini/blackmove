@@ -3,6 +3,7 @@ import { Badge } from '#/components/ui/badge'
 import { Progress } from '#/components/ui/progress'
 import { EdTimer } from '#/components/timer'
 import { LISTING_KIND_IDS, STATUS_IDS } from '#/lib/app-data'
+import { isAuctionFeatureActive } from '#/lib/feature-flags'
 import { currencyFormat, highBid, listingProgress } from '#/lib/helpers'
 import type { Listing } from '#/types/auction'
 import type { EdUser } from '#/types/user'
@@ -109,6 +110,8 @@ export function AuctionCta({
   if (auction.kind === LISTING_KIND_IDS.buyNow) {
     return <BuyNowButton auction={auction} className={className} />
   }
+  // no bidding at all while auctions are switched off
+  if (!isAuctionFeatureActive) return null
   if (auction.status !== STATUS_IDS.published) return null
   return <BidButton auction={auction} className={className} />
 }

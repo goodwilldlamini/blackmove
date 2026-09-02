@@ -17,7 +17,7 @@ export function LatestAuctionsSection() {
           </h2>
           {liveAuctions.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No live auctions yet — check back soon.
+              No live listings yet — check back soon.
             </p>
           ) : (
             <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">

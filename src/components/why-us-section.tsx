@@ -1,20 +1,30 @@
 import { Link } from '@tanstack/react-router'
-import { ChevronRight, Gavel, Globe, UserCheck } from 'lucide-react'
+import { ChevronRight, Gavel, Globe, ShoppingBag, UserCheck } from 'lucide-react'
 import { Button } from '#/components/ui/button'
 import { APP_NAME, ROUTES } from '#/lib/constants'
+import { isAuctionFeatureActive } from '#/lib/feature-flags'
 
 const SELLING_POINTS = [
-  {
-    title: 'your sale ring, online',
-    color: 'primary',
-    icon: Gavel,
-    desc: `Take the traditional livestock auction online. List your lots with photos and full details, set your starting bid and reserve, and let buyers compete from anywhere in South Africa — without the cost and hassle of hauling stock to a physical sale.`,
-  },
+  isAuctionFeatureActive
+    ? {
+        title: 'your sale ring, online',
+        color: 'primary',
+        icon: Gavel,
+        desc: `Take the traditional livestock auction online. List your lots with photos and full details, set your starting bid and reserve, and let buyers compete from anywhere in South Africa — without the cost and hassle of hauling stock to a physical sale.`,
+      } as const
+    : ({
+        title: 'your sale yard, online',
+        color: 'primary',
+        icon: ShoppingBag,
+        desc: `Sell your stock without hauling it to a physical sale. List your lots with photos and full details, set the price you want for them, and reach buyers anywhere in South Africa — no sale day, no commission ring, no waiting for the gavel.`,
+      } as const),
   {
     title: 'verified traders you can trust',
     color: 'warning',
     icon: UserCheck,
-    desc: `Sellers are vetted before they can list, and every auction is reviewed before it goes live. Buyers place a security deposit before bidding, so you trade with people who are serious about buying and selling.`,
+    desc: isAuctionFeatureActive
+      ? `Sellers are vetted before they can list, and every auction is reviewed before it goes live. Buyers place a security deposit before bidding, so you trade with people who are serious about buying and selling.`
+      : `Sellers are vetted before they can list, and every listing is reviewed before it goes live. Buyers place a security deposit before they can buy, so you trade with people who are serious about buying and selling.`,
   },
   {
     title: 'reach buyers nationwide',

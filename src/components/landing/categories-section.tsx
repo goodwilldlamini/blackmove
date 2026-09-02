@@ -15,7 +15,7 @@ export function CategoriesSection() {
               Browse by category
             </h2>
             <p className="max-w-2xl text-sm text-gray-500 sm:text-base">
-              From cattle to poultry, explore live auctions across every kind
+              From cattle to poultry, explore live listings across every kind
               of livestock traded on {APP_NAME}.
             </p>
           </div>

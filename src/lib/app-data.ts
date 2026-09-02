@@ -13,6 +13,7 @@ import {
   Play,
   ShoppingBag,
   Star,
+  Tag,
   ThumbsUp,
   User,
   UserCheck,
@@ -21,6 +22,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { APP_NAME } from './constants'
+import { isAuctionFeatureActive } from './feature-flags'
 
 const imgFolder = '/images/categories'
 
@@ -109,14 +111,18 @@ export const HOW_IT_WORKS_STEPS: { id: string; steps: HIW_STEP[] }[] = [
       {
         order: 1,
         icon: Wallet,
-        desc: 'A standard security deposit is required once - it unlocks both bidding and buy now',
+        desc: isAuctionFeatureActive
+          ? 'A standard security deposit is required once - it unlocks both bidding and buy now'
+          : 'A standard security deposit is required once, before you can buy',
         title: 'Place deposit',
       },
       {
         order: 2,
         icon: ThumbsUp,
-        desc: 'Bid on an auction and win the lot, or pay the fixed price on a buy now listing and take it right away',
-        title: 'Bid or buy now',
+        desc: isAuctionFeatureActive
+          ? 'Bid on an auction and win the lot, or pay the fixed price on a buy now listing and take it right away'
+          : 'Found the lot you want? Pay the listed price and it is yours - no bidding, no waiting',
+        title: isAuctionFeatureActive ? 'Bid or buy now' : 'Buy now',
       },
     ],
   },
@@ -138,9 +144,60 @@ export const HOW_IT_WORKS_STEPS: { id: string; steps: HIW_STEP[] }[] = [
       {
         order: 2,
         icon: ThumbsUp,
-        desc: 'List your stock as an auction or at a fixed buy now price. Note: every listing goes through a review process before it goes live',
+        desc: isAuctionFeatureActive
+          ? 'List your stock as an auction or at a fixed buy now price. Note: every listing goes through a review process before it goes live'
+          : 'List your stock at the price you want for it. Note: every listing goes through a review process before it goes live',
         title: 'Start selling',
       },
+    ],
+  },
+]
+
+export type HIW_DETAIL = {
+  id: string
+  icon: LucideIcon
+  title: string
+  tagline: string
+  desc: string
+  points: string[]
+}
+
+/**
+ * Full-detail replacement for the three step cards while auctions are off - a
+ * single lot price leaves too little to say across three cards. Keyed by the
+ * same ids as `HOW_IT_WORKS_STEPS`, so the tabs drive which tile shows.
+ */
+export const HOW_IT_WORKS_DETAILS: HIW_DETAIL[] = [
+  {
+    id: USER_TYPE_IDS.buyer,
+    icon: ShoppingBag,
+    title: `Buying on ${APP_NAME}`,
+    tagline: 'One fixed price - pay it and the lot is yours',
+    desc: ``,
+    points: [
+      'Sign up with a few personal details - no documents needed to buy',
+      // 'Place the one-off security deposit; it only ever has to be paid once',  // deposit not required anymore
+      'Filter by category, province, breed or production system to find your lot',
+      // 'Photos, weights, breed and vaccination details are on every listing',
+      'Pay by card for instant confirmation, or by EFT with proof of payment',
+      'The lot is reserved the moment you claim it, giving you a window to pay',
+      // 'The driver verifies the livestock at loading, and you verify it on arrival',
+    ],
+  },
+  {
+    id: USER_TYPE_IDS.seller,
+    icon: Tag,
+    title: `Selling on ${APP_NAME}`,
+    tagline: 'Set your price - the first buyer to pay takes the lot',
+    desc: ``,
+    points: [
+      'Sign up and upload your supporting documents',
+      'Our team verifies your profile before you can list',
+      'Build a listing in minutes - photos, weights, breed and vaccinations',
+      // 'You set the fixed price, and it is the price buyers pay',
+      'Every listing is reviewed before it goes live, so buyers see vetted stock',
+      // 'Leave it up until it sells, or give it an expiry date',
+      'Paid within 7 days of removal, once the buyer verifies delivery',
     ],
   },
 ]
