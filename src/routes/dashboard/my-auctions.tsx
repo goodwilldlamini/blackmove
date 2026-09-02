@@ -32,7 +32,7 @@ function MyAuctionsPage() {
       <div className="flex h-[65vh] w-full flex-col items-center justify-center gap-2">
         <p className="text-muted-foreground">You do not have any created auctions yet</p>
         <Button onClick={onNewAuction}>
-          <Plus /> new auction
+          <Plus /> new listing
         </Button>
       </div>
     )
@@ -40,9 +40,9 @@ function MyAuctionsPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-6">
-      <PageTitle text="My auctions">
+      <PageTitle text="My Listings">
         <Button onClick={onNewAuction}>
-          <Plus /> new auction
+          <Plus /> new listing
         </Button>
       </PageTitle>
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">

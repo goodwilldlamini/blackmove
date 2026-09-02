@@ -27,7 +27,7 @@ const DASH_NAV_ITEMS: SubNavItem[] = [
 
 function userNavItems(type?: string): SubNavItem[] {
   if (type === USER_TYPE_IDS.seller) {
-    return [{ title: 'my Auctions', route: ROUTES.myAuctions, icon: List }]
+    return [{ title: 'my Listings', route: ROUTES.myAuctions, icon: List }]
   }
   if (type === USER_TYPE_IDS.admin) {
     return [
