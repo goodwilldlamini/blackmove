@@ -13,6 +13,7 @@ import {
 } from '#/components/ui/dialog'
 import { Label } from '#/components/ui/label'
 import {
+  LISTING_KIND_IDS,
   ORDER_PAYMENT_METHODS,
   ORDER_PAYMENT_METHOD_IDS,
   ORDER_STATUS_IDS,
@@ -55,7 +56,8 @@ export function BuyNowButton({
       setShowLoginPrompt(true)
       return
     }
-    if (!user.deposit) {
+    // if listing is an uaction and the user has not placed a deposit, prompt them to do so before they can buy
+    if (auction.kind == LISTING_KIND_IDS.buyNow && !user.deposit) {
       setShowDepositPrompt(true)
       return
     }
