@@ -1,12 +1,11 @@
 import { ChevronRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { WatchButton } from '#/components/watch-button'
 import { ROUTES } from '#/lib/constants'
 
 export function Hero() {
   return (
     <div
-      className="relative flex min-h-[80vh] w-full flex-col items-center justify-center bg-cover bg-center px-4 py-16"
+      className="relative flex md:min-h-[60vh] w-full flex-col items-center justify-center bg-cover bg-center px-4 py-16"
       style={{
         backgroundImage:
           'linear-gradient(rgba(0,0,0,0.35),rgba(0,0,0,0.35)), url(/images/home/bg.jpg)',
